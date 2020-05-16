@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+    <title>Vue JS Live Searh MYSQL</title>
+  </head>
+  <body>
+    
+    <div class="container">
+        <div class="row mt-3" id="live-search">
+            <div class="col-md-12">
+                <div class="input-group input-group-lg">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="inputGroup-sizing-lg">
+                        <i class="fas fa-search"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control text-center text-success" v-on:keyup="searchUsers" v-model="search" placeholder="Search..">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Surname</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">GsmNo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="user in users">
+                        <th>{$ user.id      $}</th>
+                        <td>{$ user.name    $}</td>
+                        <td>{$ user.surname $}</td>
+                        <td>{$ user.code    $}</td>
+                        <td>{$ user.gsmno   $}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+    <script>
+        const app = new Vue({
+            el          : '#live-search',
+            delimiters  : ['{$', '$}'],
+            data        : {
+                    search  : '',
+                    users   : ''
+            },
+            methods: {
+                getUsers : function(search){
+                    axios.post('getUsers',{search:search})
+                    .then(function (response) {
+                        console.log(response.data);
+                        app.users = response.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    }); 
+                },
+                searchUsers : function(){
+                    this.getUsers(this.search);
+                }
+            },
+            created(){
+                this.getUsers('');
+            }
+        });
+    </script>
+  </body>
+</html>
